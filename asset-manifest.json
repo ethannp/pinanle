@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/pinanle/static/css/main.6736082e.css",
+    "main.js": "/pinanle/static/js/main.33b02a3e.js",
+    "index.html": "/pinanle/index.html",
+    "main.6736082e.css.map": "/pinanle/static/css/main.6736082e.css.map",
+    "main.33b02a3e.js.map": "/pinanle/static/js/main.33b02a3e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6736082e.css",
+    "static/js/main.33b02a3e.js"
+  ]
+}
