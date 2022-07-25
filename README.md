@@ -1,7 +1,6 @@
 # Pinanle
 
-Forked from [Shizerq](https://github.com/Shizerq/sluchajfun) 
-Clone of famous [Heardle](https://heardle.app) - "that daily music game". <br />
+Forked from [Shizerq](https://github.com/Shizerq/sluchajfun), a clone of [Heardle](https://heardle.app) for piano pieces.
 
 # Contributing
 
