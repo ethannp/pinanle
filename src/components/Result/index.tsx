@@ -39,58 +39,49 @@ export function Result({
     });
   const textForTry = ["Pinanle god!", "Too hot to Handel!", "W moment", "FOURty hours practiced!", "⭐🎹⭐", "Close one!"];
 
-  if (didGuess) {
-    const copyResult = React.useCallback(() => {
-      navigator.clipboard.writeText(scoreToEmoji(guesses));
-      setIsCopied(true);
-    }, [guesses]);
-    return (
-      <>
+  const copyResult = React.useCallback(() => {
+    navigator.clipboard.writeText(scoreToEmoji(guesses));
+    setIsCopied(true);
+  }, [guesses]);
+  return (
+    <>
+      {didGuess ? ( 
         <Styled.ResultTitle>{textForTry[currentTry - 1]}</Styled.ResultTitle>
-        <Styled.SongTitle>
-          Today&apos;s piece was {todaysSolution.artist} -{" "}
-          {todaysSolution.name}
-        </Styled.SongTitle>
+      ) : (
+        <Styled.ResultTitle>Need to practice more?</Styled.ResultTitle>
+      )}
+      <Styled.SongTitle>
+        Today&apos;s piece was {todaysSolution.artist} -{" "}
+        {todaysSolution.name}
+      </Styled.SongTitle>
+      {didGuess ? (
         <Styled.Tries>
           You got today&apos;s Pinanle in {currentTry} {currentTry === 1 ? 'try!' : 'tries!'}
         </Styled.Tries>
-        <YouTube id={todaysSolution.youtubeId} />
-        <Button onClick={copyResult} variant="blue">
-          Copy results
-        </Button>
-        {isCopied && <Styled.Text>Copied to clipboard!</Styled.Text>}
-        <Styled.TimeToNext>
-          Come Bach in:
-          <p style={{color: "#FFF", fontSize: 24, marginTop: 0}}>{Math.floor(timeLeft / 60 / 60)}:{("0"+Math.floor(timeLeft / 60 % 60)).slice(-2)}:{("0"+Math.floor(timeLeft % 60)).slice(-2)}</p>
-        </Styled.TimeToNext>
-      </>
-    );
-  } else {
-    const copyResult = React.useCallback(() => {
-      navigator.clipboard.writeText(scoreToEmoji(guesses));
-      setIsCopied(true);
-    }, [guesses]);
-    return (
-      <>
-        <Styled.ResultTitle>Need to practice more?</Styled.ResultTitle>
-        <Styled.SongTitle>
-          Today&apos;s piece was {todaysSolution.artist} -{" "}
-          {todaysSolution.name}
-        </Styled.SongTitle>
+      ) : (
         <Styled.Tries>
           You didn&apos;t get today&apos;s Pinanle. Better luck tomorrow!
         </Styled.Tries>
-        <YouTube id={todaysSolution.youtubeId} />
-        <Button onClick={copyResult} variant="blue">
-          Copy results
-        </Button>
-        {isCopied && <Styled.Text>Copied to clipboard!</Styled.Text>}
-        <Styled.TimeToNext style={{color: theme.gray}}>
-          Come Bach in:
-          <p style={{color: "#FFF", fontSize: 24, marginTop: 0}}>{Math.floor(timeLeft / 60 / 60)}:{("0"+Math.floor(timeLeft / 60 % 60)).slice(-2)}:{("0"+Math.floor(timeLeft % 60)).slice(-2)}</p>
-        </Styled.TimeToNext>
-      </>
-    );
-  }
+      )}
+      <Styled.ResultsColorContainer>
+      {guesses.map((guess: GuessType, index) => (
+        <Styled.ResultColorBox
+          key={index}
+          style={(guess.skipped || guess.isCorrect == undefined) ? 
+            {backgroundColor: theme.gray} : 
+            (guess.isCorrect ? {backgroundColor: "#00ab1c"} : {backgroundColor: "#ba0000"})}></Styled.ResultColorBox>
+      ))}
+      </Styled.ResultsColorContainer>
+      <YouTube id={todaysSolution.youtubeId} />
+      <Button onClick={copyResult} variant="blue">
+        Copy results
+      </Button>
+      {isCopied && <Styled.Text>Copied to clipboard!</Styled.Text>}
+      <Styled.TimeToNext>
+        Come Bach in:
+        <p style={{fontSize: 24, marginTop: 0}}>{Math.floor(timeLeft / 60 / 60)}:{("0"+Math.floor(timeLeft / 60 % 60)).slice(-2)}:{("0"+Math.floor(timeLeft % 60)).slice(-2)}</p>
+      </Styled.TimeToNext>
+    </>
+  );
 }
 

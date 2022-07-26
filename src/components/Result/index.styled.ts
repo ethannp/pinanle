@@ -32,10 +32,23 @@ export const TimeToNext = styled.p`
     width: 100%;
   }
   text-align: center;
+  color: #DDD;
 `;
 
 export const Text = styled.p`
   font-size: 16px;
   color: ${({ theme }) => theme.gray};
   margin-top: 9px;
+`
+
+export const ResultColorBox = styled.span`
+  width: 18px;
+  height: 5px;
+  display: inline-block;
+  margin: 0px 4px;
+`
+
+export const ResultsColorContainer = styled.div`
+  height: 10px;
+  margin-bottom: 20px;
 `
