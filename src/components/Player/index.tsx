@@ -31,9 +31,7 @@ export function Player({ id, currentTry, mode }: Props) {
 
   const [isReady, setIsReady] = React.useState<boolean>(false);
 
-  const [startTime, setStartTime] = React.useState<number>(-1);
-
-  const stateRef = React.useRef<number>(-1);
+  const startTimeRef = React.useRef<number>(-1);
 
   function hash(duration: number): number {
     let hash = 0;
@@ -42,7 +40,7 @@ export function Player({ id, currentTry, mode }: Props) {
       hash = (hash << 5) - hash + chr;
       hash |= 0;
     }
-    return 10 + (hash % (duration - 46));
+    return 10 + (Math.abs(hash) % (duration - 46));
   }
 
   React.useEffect(() => {
@@ -56,31 +54,29 @@ export function Player({ id, currentTry, mode }: Props) {
   }, []);
 
   React.useEffect(() => {
-    if (startTime == -1) {
+    if (startTimeRef.current == -1) {
       if (mode == "random") {
         playerRef.current?.internalPlayer
           .getDuration()
           .then((dur: number) => {
-            setStartTime(hash(dur));
-            stateRef.current = hash(dur)
+            startTimeRef.current = hash(dur)
             playerRef.current?.internalPlayer.seekTo(hash(dur));
             playerRef.current?.internalPlayer.pauseVideo();
             setPlay(false);
           });
       } else if (mode == "classic") {
-        setStartTime(0);
-        stateRef.current = 0;
+        startTimeRef.current = 0;
       } else {
-        console.log("Valid mode not passed.")
+        //console.log("Waiting for valid mode to be passed.")
       }
     }
-  }, [mode])
+  })
 
   React.useEffect(() => {
     if (play) {
-      if ((currentTime - startTime) * 1000 >= currentPlayTime) {
+      if ((currentTime - startTimeRef.current) * 1000 >= currentPlayTime) {
         playerRef.current?.internalPlayer.pauseVideo();
-        playerRef.current?.internalPlayer.seekTo(stateRef.current);
+        playerRef.current?.internalPlayer.seekTo(startTimeRef.current);
         setPlay(false);
       }
     }
@@ -98,11 +94,11 @@ export function Player({ id, currentTry, mode }: Props) {
         // 3 = buffering
         if (status == 1) { // playing
           playerRef.current?.internalPlayer.pauseVideo();
-          playerRef.current?.internalPlayer.seekTo(stateRef.current);
+          playerRef.current?.internalPlayer.seekTo(startTimeRef.current);
           setPlay(false);
         } else {
           setPlay(true);
-          playerRef.current?.internalPlayer.seekTo(stateRef.current);
+          playerRef.current?.internalPlayer.seekTo(startTimeRef.current);
           playerRef.current?.internalPlayer.playVideo();
           event({
             category: "Player",
@@ -120,14 +116,12 @@ export function Player({ id, currentTry, mode }: Props) {
 
   return (
     <>
-    <p>{startTime}</p>
-    <p>{stateRef.current}</p>
       <YouTube opts={opts} videoId={id} onReady={setReady} ref={playerRef} />
-      {isReady ? (
+      {isReady && mode != "unknown" && startTimeRef.current != -1 ? (
         <>
           <Styled.ProgressBackground>
             <Styled.AvailableBar value={currentPlayTime}></Styled.AvailableBar>
-            {play && <Styled.Progress value={currentTime - startTime} />}
+            {play && <Styled.Progress value={currentTime - startTimeRef.current} />}
             {playTimes.map((playTime) => (
               <Styled.Separator
                 style={{ left: `${(playTime / 16000) * 100}%` }}

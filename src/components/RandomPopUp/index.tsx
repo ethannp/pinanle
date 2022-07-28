@@ -10,8 +10,8 @@ interface Props {
 
 export function RandomPopUp({ onClose, mode }: Props) {
 
-  const curTmrwMode = localStorage.getItem("tomorrowsMode") == undefined ? "classic" : localStorage.getItem("tomorrowsMode")
-  const [tmrwMode, setTmrwMode] = React.useState<string>(curTmrwMode!);
+  const curTmrwMode = localStorage.getItem("tomorrowsMode") || "classic";
+  const [tmrwMode, setTmrwMode] = React.useState<string>(curTmrwMode);
 
   const handleSelectMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     localStorage.setItem("tomorrowsMode", event.target.value);

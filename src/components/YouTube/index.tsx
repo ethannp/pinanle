@@ -18,6 +18,7 @@ export function YouTube({ id, mode }: Props) {
     return 10 + (hash % (duration - 46));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const playerRef = React.useRef<any>(null);
   const setReady = React.useCallback(() => {
     playerRef.current?.internalPlayer.setVolume(80);
