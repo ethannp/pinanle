@@ -15,7 +15,7 @@ export function InfoPopUp({ onClose }: Props) {
         <Styled.Spacer />
         <Styled.Section>
           <p>
-            Listen to the intro, then find the correct Piano piece{" "}
+            Listen to the piece, then identify the correct Piano work{" "}
             <a
               href="https://docs.google.com/spreadsheets/d/1kf_UcGDaMiQ4kcOUIpgyvOrfxKT3srEvkHdLJJMDPpI/edit#gid=0"
               target="_blank"

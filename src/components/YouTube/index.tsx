@@ -14,7 +14,7 @@ export function YouTube({ id, mode }: Props) {
       hash = (hash << 5) - hash + chr;
       hash |= 0;
     }
-    return 10 + (hash % (duration - 46));
+    return 10 + (Math.abs(hash) % (Math.max(duration - 46, 1)));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
