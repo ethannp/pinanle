@@ -7,7 +7,6 @@ interface Props {
 }
 
 export function YouTube({ id, mode }: Props) {
-
   function hash(duration: number): number {
     let hash = 0;
     for (let i = 0, len = id.length; i < len; i++) {
@@ -23,12 +22,10 @@ export function YouTube({ id, mode }: Props) {
   const setReady = React.useCallback(() => {
     playerRef.current?.internalPlayer.setVolume(80);
     playerRef.current?.internalPlayer.unMute();
-    if (mode == "random"){
-      playerRef.current?.internalPlayer
-          .getDuration()
-          .then((dur: number) => {
-            playerRef.current?.internalPlayer.seekTo(hash(dur));
-          });
+    if (mode == "random") {
+      playerRef.current?.internalPlayer.getDuration().then((dur: number) => {
+        playerRef.current?.internalPlayer.seekTo(hash(dur));
+      });
     }
   }, []);
 

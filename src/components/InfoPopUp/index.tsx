@@ -15,7 +15,15 @@ export function InfoPopUp({ onClose }: Props) {
         <Styled.Spacer />
         <Styled.Section>
           <p>
-            Listen to the intro, then find the correct Piano piece <a href="https://docs.google.com/spreadsheets/d/1kf_UcGDaMiQ4kcOUIpgyvOrfxKT3srEvkHdLJJMDPpI/edit#gid=0" target="_blank" rel="noreferrer">in the list</a>.
+            Listen to the intro, then find the correct Piano piece{" "}
+            <a
+              href="https://docs.google.com/spreadsheets/d/1kf_UcGDaMiQ4kcOUIpgyvOrfxKT3srEvkHdLJJMDPpI/edit#gid=0"
+              target="_blank"
+              rel="noreferrer"
+            >
+              in the list
+            </a>
+            .
           </p>
         </Styled.Section>
         <Styled.Section>

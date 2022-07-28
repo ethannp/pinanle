@@ -8,7 +8,13 @@ import { GuessType } from "./types/guess";
 
 import { todaysSolution } from "./helpers";
 
-import { Header, InfoPopUp, WarningPopUp, RandomPopUp, Game } from "./components";
+import {
+  Header,
+  InfoPopUp,
+  WarningPopUp,
+  RandomPopUp,
+  Game,
+} from "./components";
 
 import * as Styled from "./app.styled";
 
@@ -47,16 +53,16 @@ function App() {
           didGuess: 0,
           mode: localStorage.getItem("tomorrowsMode") || "classic",
         });
-        setMode(stats[stats.length - 1].mode || "classic")
+        setMode(stats[stats.length - 1].mode || "classic");
       } else {
         const { currentTry, guesses, didGuess } = stats[stats.length - 1];
         setCurrentTry(currentTry);
         setGuesses(guesses);
         setDidGuess(didGuess);
-        if(stats[stats.length - 1].mode == undefined) {
+        if (stats[stats.length - 1].mode == undefined) {
           stats[stats.length - 1].mode = "classic";
         }
-        setMode(stats[stats.length - 1].mode || "classic")
+        setMode(stats[stats.length - 1].mode || "classic");
       }
     } else {
       // initialize stats
@@ -66,11 +72,9 @@ function App() {
         solution: todaysSolution,
         mode: localStorage.getItem("tomorrowsMode") || "classic",
       });
-      setMode(stats[stats.length - 1].mode || "classic")
+      setMode(stats[stats.length - 1].mode || "classic");
     }
   }, []);
-
-  //stats[stats.length - 1] != undefined ? stats[stats.length - 1].mode : (localStorage.getItem("tomorrowsMode") || "classic"))
 
   React.useEffect(() => {
     if (Array.isArray(stats)) {
@@ -102,26 +106,26 @@ function App() {
   }, [localStorage.getItem("firstRun")]);
 
   const [isWarningPopUpOpen, setIsWarningPopUpOpen] =
-  React.useState<boolean>(false);
+    React.useState<boolean>(false);
 
   const openWarningPopUp = React.useCallback(() => {
     setIsWarningPopUpOpen(true);
-  }, [])
+  }, []);
 
   const closeWarningPopUp = React.useCallback(() => {
     setIsWarningPopUpOpen(false);
-  }, [])
+  }, []);
 
   const [isRandomPopUpOpen, setIsRandomPopUpOpen] =
-  React.useState<boolean>(false);
+    React.useState<boolean>(false);
 
   const openRandomPopUp = React.useCallback(() => {
     setIsRandomPopUpOpen(true);
-  }, [])
+  }, []);
 
   const closeRandomPopUp = React.useCallback(() => {
     setIsRandomPopUpOpen(false);
-  }, [])
+  }, []);
   const skip = React.useCallback(() => {
     setGuesses((guesses: GuessType[]) => {
       const newGuesses = [...guesses];
@@ -178,12 +182,16 @@ function App() {
 
   return (
     <main>
-      <Header openInfoPopUp={openInfoPopUp} openWarningPopUp={openWarningPopUp} openRandomPopUp={openRandomPopUp} />
+      <Header
+        openInfoPopUp={openInfoPopUp}
+        openWarningPopUp={openWarningPopUp}
+        openRandomPopUp={openRandomPopUp}
+      />
       {isInfoPopUpOpen && <InfoPopUp onClose={closeInfoPopUp} />}
       {isWarningPopUpOpen && <WarningPopUp onClose={closeWarningPopUp} />}
-      {isRandomPopUpOpen && 
-      <RandomPopUp onClose={closeRandomPopUp}
-      mode={mode} />}
+      {isRandomPopUpOpen && (
+        <RandomPopUp onClose={closeRandomPopUp} mode={mode} />
+      )}
       <Styled.Container>
         <Game
           guesses={guesses}

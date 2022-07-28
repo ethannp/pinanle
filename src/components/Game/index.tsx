@@ -49,13 +49,19 @@ export function Game({
           active={index === currentTry}
         />
       ))}
-      <Player id={todaysSolution.youtubeId} currentTry={currentTry} mode={mode} />
+      <Player
+        id={todaysSolution.youtubeId}
+        currentTry={currentTry}
+        mode={mode}
+      />
       <Search currentTry={currentTry} setSelectedSong={setSelectedSong} />
       {currentTry >= 4 && (
         <Styled.Hint>
           Hint: The composer is
           <input type="checkbox" id="toggleSpoiler" />
-          <label htmlFor="toggleSpoiler"><span>{todaysSolution.artist}</span></label>
+          <label htmlFor="toggleSpoiler">
+            <span>{todaysSolution.artist}</span>
+          </label>
         </Styled.Hint>
       )}
       <Styled.Buttons>

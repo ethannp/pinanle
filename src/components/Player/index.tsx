@@ -56,21 +56,19 @@ export function Player({ id, currentTry, mode }: Props) {
   React.useEffect(() => {
     if (startTimeRef.current == -1) {
       if (mode == "random") {
-        playerRef.current?.internalPlayer
-          .getDuration()
-          .then((dur: number) => {
-            startTimeRef.current = hash(dur)
-            playerRef.current?.internalPlayer.seekTo(hash(dur));
-            playerRef.current?.internalPlayer.pauseVideo();
-            setPlay(false);
-          });
+        playerRef.current?.internalPlayer.getDuration().then((dur: number) => {
+          startTimeRef.current = hash(dur);
+          playerRef.current?.internalPlayer.seekTo(hash(dur));
+          playerRef.current?.internalPlayer.pauseVideo();
+          setPlay(false);
+        });
       } else if (mode == "classic") {
         startTimeRef.current = 0;
       } else {
         //console.log("Waiting for valid mode to be passed.")
       }
     }
-  })
+  });
 
   React.useEffect(() => {
     if (play) {
@@ -92,7 +90,8 @@ export function Player({ id, currentTry, mode }: Props) {
         // 1 = playing
         // 2 = paused
         // 3 = buffering
-        if (status == 1) { // playing
+        if (status == 1) {
+          // playing
           playerRef.current?.internalPlayer.pauseVideo();
           playerRef.current?.internalPlayer.seekTo(startTimeRef.current);
           setPlay(false);
@@ -121,7 +120,9 @@ export function Player({ id, currentTry, mode }: Props) {
         <>
           <Styled.ProgressBackground>
             <Styled.AvailableBar value={currentPlayTime}></Styled.AvailableBar>
-            {play && <Styled.Progress value={currentTime - startTimeRef.current} />}
+            {play && (
+              <Styled.Progress value={currentTime - startTimeRef.current} />
+            )}
             {playTimes.map((playTime) => (
               <Styled.Separator
                 style={{ left: `${(playTime / 16000) * 100}%` }}
@@ -131,7 +132,9 @@ export function Player({ id, currentTry, mode }: Props) {
           </Styled.ProgressBackground>
           <Styled.TimeStamps>
             <Styled.TimeStamp>{mode == "random" ? "?" : "0s"}</Styled.TimeStamp>
-            <Styled.TimeStamp>{mode == "random" ? "?" : "16s"}</Styled.TimeStamp>
+            <Styled.TimeStamp>
+              {mode == "random" ? "?" : "16s"}
+            </Styled.TimeStamp>
           </Styled.TimeStamps>
           <Styled.PlayButton>
             {play ? (
