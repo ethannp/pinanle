@@ -1,5 +1,5 @@
 import React from "react";
-import { IoCloseCircleOutline } from "react-icons/io5"
+import { IoCloseCircleOutline, IoLogoGithub } from "react-icons/io5"
 import { theme, startDate } from "../../constants";
 import * as Styled from "./index.styled";
 
@@ -30,7 +30,7 @@ export function WarningPopUp({ onClose }: Props) {
         </Styled.Section>
         <Styled.Section>
           <p>
-            If the sound doesn&apos;t play, it would be helpful to know your location (country is fine) so I know where a video may be region-blocked. All pieces <i>should</i> start within 3 seconds.
+            When the page is loaded, the video will unmute itself and set its volume to 80%. All pieces <i>should</i> start within 3 seconds. 
           </p>
         </Styled.Section>
         <Styled.Section>
@@ -38,6 +38,9 @@ export function WarningPopUp({ onClose }: Props) {
             Today is Pinanle #{index}.
           </p>
         </Styled.Section>
+        <a href="https://github.com/ethannp/pinanle" target="_blank" rel="noreferrer">
+          <IoLogoGithub size={30} color="white"/>
+        </a>
       </Styled.PopUp>
     </Styled.Container>
   );

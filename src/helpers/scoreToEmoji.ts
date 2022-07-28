@@ -1,7 +1,7 @@
 import { GuessType } from "../types/guess";
 import { startDate } from "../constants"
 
-export function scoreToEmoji(guesses: GuessType[]): string {
+export function scoreToEmoji(guesses: GuessType[], mode: string): string {
   const msInDay = 86400000;
   const todaysDate = new Date();
   const index = Math.floor((todaysDate.getTime() - startDate.getTime() )/msInDay) + 1 
@@ -12,7 +12,7 @@ export function scoreToEmoji(guesses: GuessType[]): string {
     empty: "🎹",
   };
   // const todaysDate = new Date();
-  const prefix = `Pinanle #${index}`;
+  const prefix = `Pinanle ${mode.charAt(0).toUpperCase() + mode.slice(1)} #${index}`;
 
   let scoreEmoji = "";
   let isCorrect = false;

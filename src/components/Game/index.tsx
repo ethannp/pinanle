@@ -15,6 +15,7 @@ interface Props {
   setSelectedSong: React.Dispatch<React.SetStateAction<Song | undefined>>;
   skip: () => void;
   guess: () => void;
+  mode: string;
 }
 
 export function Game({
@@ -25,6 +26,7 @@ export function Game({
   setSelectedSong,
   skip,
   guess,
+  mode,
 }: Props) {
   if (didGuess || currentTry === 6) {
     return (
@@ -33,6 +35,7 @@ export function Game({
         currentTry={currentTry}
         todaysSolution={todaysSolution}
         guesses={guesses}
+        mode={mode}
       />
     );
   }
@@ -46,7 +49,7 @@ export function Game({
           active={index === currentTry}
         />
       ))}
-      <Player id={todaysSolution.youtubeId} currentTry={currentTry} />
+      <Player id={todaysSolution.youtubeId} currentTry={currentTry} mode={mode} />
       <Search currentTry={currentTry} setSelectedSong={setSelectedSong} />
       {currentTry >= 4 && (
         <Styled.Hint>

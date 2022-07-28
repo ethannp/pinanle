@@ -15,6 +15,7 @@ interface Props {
   currentTry: number;
   todaysSolution: Song;
   guesses: GuessType[];
+  mode: string;
 }
 
 export function Result({
@@ -22,6 +23,7 @@ export function Result({
   todaysSolution,
   guesses,
   currentTry,
+  mode,
 }: Props) {
 
   const calculateTimeLeft = () => { return Math.floor(
@@ -40,7 +42,7 @@ export function Result({
   const textForTry = ["Pinanle god!", "Too hot to Handel!", "W moment", "FOURty hours practiced!", "⭐🎹⭐", "Close one!"];
 
   const copyResult = React.useCallback(() => {
-    navigator.clipboard.writeText(scoreToEmoji(guesses));
+    navigator.clipboard.writeText(scoreToEmoji(guesses, mode));
     setIsCopied(true);
   }, [guesses]);
   return (
@@ -72,7 +74,7 @@ export function Result({
             (guess.isCorrect ? {backgroundColor: "#00ab1c"} : {backgroundColor: "#ba0000"})}></Styled.ResultColorBox>
       ))}
       </Styled.ResultsColorContainer>
-      <YouTube id={todaysSolution.youtubeId} />
+      <YouTube id={todaysSolution.youtubeId} mode={mode}/>
       <Button onClick={copyResult} variant="blue">
         Copy results
       </Button>

@@ -24,9 +24,6 @@ export function InfoPopUp({ onClose }: Props) {
         <Styled.Section>
           <p>Answer in as few tries as possible and share your score!</p>
         </Styled.Section>
-        <Styled.Section>
-          <p>Template from <a target="_blank" rel="noreferrer" href="https://github.com/Shizerq/sluchajfun">Shizerq</a>, made into Piano by fluff#2368.</p>
-        </Styled.Section>
         <Button variant="green" style={{ marginTop: 20 }} onClick={onClose}>
           Play
         </Button>

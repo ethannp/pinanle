@@ -39,7 +39,7 @@ module.exports = {
     "react/display-name": [0],
 
     "@typescript-eslint/no-empty-interface": [0],
-
+    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": [0],
   },
 };
