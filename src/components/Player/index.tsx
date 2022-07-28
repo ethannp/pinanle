@@ -10,9 +10,10 @@ import * as Styled from "./index.styled";
 interface Props {
   id: string;
   currentTry: number;
+  mode: string;
 }
 
-export function Player({ id, currentTry }: Props) {
+export function Player({ id, currentTry, mode }: Props) {
   const opts = {
     width: "0",
     height: "0",
@@ -30,6 +31,18 @@ export function Player({ id, currentTry }: Props) {
 
   const [isReady, setIsReady] = React.useState<boolean>(false);
 
+  const startTimeRef = React.useRef<number>(-1);
+
+  function hash(duration: number): number {
+    let hash = 0;
+    for (let i = 0, len = id.length; i < len; i++) {
+      const chr = id.charCodeAt(i);
+      hash = (hash << 5) - hash + chr;
+      hash |= 0;
+    }
+    return 10 + (Math.abs(hash) % (Math.max(duration - 46, 1)));
+  }
+
   React.useEffect(() => {
     setInterval(() => {
       playerRef.current?.internalPlayer
@@ -41,10 +54,27 @@ export function Player({ id, currentTry }: Props) {
   }, []);
 
   React.useEffect(() => {
+    if (startTimeRef.current == -1) {
+      if (mode == "random") {
+        playerRef.current?.internalPlayer.getDuration().then((dur: number) => {
+          startTimeRef.current = hash(dur);
+          playerRef.current?.internalPlayer.seekTo(hash(dur));
+          playerRef.current?.internalPlayer.pauseVideo();
+          setPlay(false);
+        });
+      } else if (mode == "classic") {
+        startTimeRef.current = 0;
+      } else {
+        //console.log("Waiting for valid mode to be passed.")
+      }
+    }
+  });
+
+  React.useEffect(() => {
     if (play) {
-      if (currentTime * 1000 >= currentPlayTime) {
+      if ((currentTime - startTimeRef.current) * 1000 >= currentPlayTime) {
         playerRef.current?.internalPlayer.pauseVideo();
-        playerRef.current?.internalPlayer.seekTo(0);
+        playerRef.current?.internalPlayer.seekTo(startTimeRef.current);
         setPlay(false);
       }
     }
@@ -55,12 +85,19 @@ export function Player({ id, currentTry }: Props) {
     playerRef.current?.internalPlayer
       .getPlayerState()
       .then(function (status: number) {
+        // -1 = unstarted
+        // 0 = ended
+        // 1 = playing
+        // 2 = paused
+        // 3 = buffering
         if (status == 1) {
+          // playing
           playerRef.current?.internalPlayer.pauseVideo();
-          playerRef.current?.internalPlayer.seekTo(0);
+          playerRef.current?.internalPlayer.seekTo(startTimeRef.current);
           setPlay(false);
         } else {
           setPlay(true);
+          playerRef.current?.internalPlayer.seekTo(startTimeRef.current);
           playerRef.current?.internalPlayer.playVideo();
           event({
             category: "Player",
@@ -79,11 +116,13 @@ export function Player({ id, currentTry }: Props) {
   return (
     <>
       <YouTube opts={opts} videoId={id} onReady={setReady} ref={playerRef} />
-      {isReady ? (
+      {isReady && mode != "unknown" && startTimeRef.current != -1 ? (
         <>
           <Styled.ProgressBackground>
             <Styled.AvailableBar value={currentPlayTime}></Styled.AvailableBar>
-            {currentTime !== 0 && <Styled.Progress value={currentTime} />}
+            {play && (
+              <Styled.Progress value={currentTime - startTimeRef.current} />
+            )}
             {playTimes.map((playTime) => (
               <Styled.Separator
                 style={{ left: `${(playTime / 16000) * 100}%` }}
@@ -92,19 +131,20 @@ export function Player({ id, currentTry }: Props) {
             ))}
           </Styled.ProgressBackground>
           <Styled.TimeStamps>
-            <Styled.TimeStamp>0s</Styled.TimeStamp>
-            <Styled.TimeStamp>16s</Styled.TimeStamp>
+            <Styled.TimeStamp>{mode == "random" ? "?" : "0s"}</Styled.TimeStamp>
+            <Styled.TimeStamp>
+              {mode == "random" ? "?" : "16s"}
+            </Styled.TimeStamp>
           </Styled.TimeStamps>
           <Styled.PlayButton>
-            {currentTime == 0 && (
-              <IoPlayCircleOutline
+            {play ? (
+              <IoStopCircleOutline
                 size={60}
                 color="#fff"
                 onClick={startPlayback}
               />
-            )}
-            {currentTime > 0 && (
-              <IoStopCircleOutline
+            ) : (
+              <IoPlayCircleOutline
                 size={60}
                 color="#fff"
                 onClick={startPlayback}

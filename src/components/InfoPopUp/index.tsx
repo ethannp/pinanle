@@ -15,7 +15,15 @@ export function InfoPopUp({ onClose }: Props) {
         <Styled.Spacer />
         <Styled.Section>
           <p>
-            Listen to the intro, then find the correct Piano piece <a href="https://docs.google.com/spreadsheets/d/1kf_UcGDaMiQ4kcOUIpgyvOrfxKT3srEvkHdLJJMDPpI/edit#gid=0" target="_blank" rel="noreferrer">in the list</a>.
+            Listen to the piece, then identify the correct Piano work{" "}
+            <a
+              href="https://docs.google.com/spreadsheets/d/1kf_UcGDaMiQ4kcOUIpgyvOrfxKT3srEvkHdLJJMDPpI/edit#gid=0"
+              target="_blank"
+              rel="noreferrer"
+            >
+              in the list
+            </a>
+            .
           </p>
         </Styled.Section>
         <Styled.Section>
@@ -23,9 +31,6 @@ export function InfoPopUp({ onClose }: Props) {
         </Styled.Section>
         <Styled.Section>
           <p>Answer in as few tries as possible and share your score!</p>
-        </Styled.Section>
-        <Styled.Section>
-          <p>Template from <a target="_blank" rel="noreferrer" href="https://github.com/Shizerq/sluchajfun">Shizerq</a>, made into Piano by fluff#2368.</p>
         </Styled.Section>
         <Button variant="green" style={{ marginTop: 20 }} onClick={onClose}>
           Play
