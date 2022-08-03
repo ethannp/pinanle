@@ -43,6 +43,12 @@ export function Player({ id, currentTry, mode }: Props) {
     return 10 + (Math.abs(hash) % (Math.max(duration - 46, 1)));
   }
 
+  setTimeout(function() {
+    if (document.getElementById("loadText")?.innerHTML) {
+      document.getElementById("loadText")!.innerHTML = "Loading player... <br/>Taking a long time? Try refreshing the page, but contact me if this doesn't fix it."
+    }
+}, 4000);
+
   React.useEffect(() => {
     setInterval(() => {
       playerRef.current?.internalPlayer
@@ -153,7 +159,7 @@ export function Player({ id, currentTry, mode }: Props) {
           </Styled.PlayButton>
         </>
       ) : (
-        <p>Loading player...</p>
+        <p id="loadText" style={{textAlign:"center"}}>Loading player...</p>
       )}
     </>
   );
