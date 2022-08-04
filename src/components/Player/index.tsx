@@ -15,8 +15,8 @@ interface Props {
 
 export function Player({ id, currentTry, mode }: Props) {
   const opts = {
-    width: "0",
-    height: "0",
+    width: "1",
+    height: "1",
   };
 
   // react-youtube doesn't export types for this
@@ -40,14 +40,16 @@ export function Player({ id, currentTry, mode }: Props) {
       hash = (hash << 5) - hash + chr;
       hash |= 0;
     }
-    return 10 + (Math.abs(hash) % (Math.max(duration - 46, 1)));
+    return 10 + (Math.abs(hash) % Math.max(duration - 46, 1));
   }
 
-  setTimeout(function() {
-    if (document.getElementById("loadText")?.innerHTML) {
-      document.getElementById("loadText")!.innerHTML = "Loading player... <br/>Taking a long time? Try refreshing the page, but contact me if this doesn't fix it."
+  setTimeout(function () {
+    const loadingText = document.getElementById("loadText");
+    if (loadingText !== null) {
+      loadingText.innerHTML =
+        "Loading player... <br/>Taking a long time? Try refreshing the page, but contact me if this doesn't fix it.";
     }
-}, 4000);
+  }, 6000);
 
   React.useEffect(() => {
     setInterval(() => {
@@ -96,6 +98,7 @@ export function Player({ id, currentTry, mode }: Props) {
         // 1 = playing
         // 2 = paused
         // 3 = buffering
+        // 5 = video cued
         if (status == 1) {
           // playing
           playerRef.current?.internalPlayer.pauseVideo();
@@ -121,9 +124,12 @@ export function Player({ id, currentTry, mode }: Props) {
 
   return (
     <>
-      <YouTube opts={opts} videoId={id} onReady={setReady} ref={playerRef} />
+      <div style={{ opacity: 0, pointerEvents: "none", position: "absolute" }}>
+        <YouTube opts={opts} videoId={id} onReady={setReady} ref={playerRef} />
+      </div>
       {isReady && mode != "unknown" && startTimeRef.current != -1 ? (
         <>
+          <div style={{ marginTop: "10px" }} />
           <Styled.ProgressBackground>
             <Styled.AvailableBar value={currentPlayTime}></Styled.AvailableBar>
             {play && (
@@ -159,7 +165,9 @@ export function Player({ id, currentTry, mode }: Props) {
           </Styled.PlayButton>
         </>
       ) : (
-        <p id="loadText" style={{textAlign:"center"}}>Loading player...</p>
+        <p id="loadText" style={{ textAlign: "center" }}>
+          Loading player...
+        </p>
       )}
     </>
   );
