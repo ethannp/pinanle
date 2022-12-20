@@ -22,8 +22,7 @@ export const AvailableBar = styled.div<{ value: number }>`
   align-self: flex-start;
 `
 
-export const Progress = styled.div<{ value: number }>`
-  width: ${({ value }) => value * 6.25}%;
+export const Progress = styled.div`
   height: 20px;
   position: absolute;
   align-self: flex-start;

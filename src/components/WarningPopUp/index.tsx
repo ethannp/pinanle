@@ -1,6 +1,6 @@
 import React from "react";
 import { IoCloseCircleOutline, IoLogoGithub } from "react-icons/io5";
-import { theme, startDate } from "../../constants";
+import { startDate, theme } from "../../constants";
 import * as Styled from "./index.styled";
 
 interface Props {
@@ -43,8 +43,7 @@ export function WarningPopUp({ onClose }: Props) {
         </Styled.Section>
         <Styled.Section>
           <p>
-            When the page is loaded, the video will unmute itself and set its
-            volume to 80%. All pieces <i>should</i> start within 3 seconds.
+            All pieces <i>should</i> start within 3 seconds.
           </p>
         </Styled.Section>
         <Styled.Section>

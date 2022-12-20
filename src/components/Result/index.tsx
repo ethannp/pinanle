@@ -1,14 +1,14 @@
 import React from "react";
 
-import { Song } from "../../types/song";
-import { GuessType } from "../../types/guess";
 import { scoreToEmoji } from "../../helpers";
+import { GuessType } from "../../types/guess";
+import { Song } from "../../types/song";
 
 import { Button } from "../Button";
 import { YouTube } from "../YouTube";
 
-import * as Styled from "./index.styled";
 import { theme } from "../../constants";
+import * as Styled from "./index.styled";
 
 interface Props {
   didGuess: boolean;
@@ -35,6 +35,8 @@ export function Result({
 
   const [isCopied, setIsCopied] = React.useState(false);
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft());
+  const [videoLoads, setVideoLoads] = React.useState(true);
+  const mp3ref = React.useRef<HTMLAudioElement>(null);
 
   React.useEffect(() => {
     setTimeout(() => {
@@ -54,6 +56,28 @@ export function Result({
     navigator.clipboard.writeText(scoreToEmoji(guesses, mode));
     setIsCopied(true);
   }, [guesses]);
+
+  const source =
+    "https://raw.githubusercontent.com/flfff/pinanle-storage/main/pieces/" +
+    todaysSolution.youtubeId +
+    ".mp3";
+
+  function hash(duration: number): number {
+    let hash = 0;
+    for (let i = 0, len = todaysSolution.youtubeId.length; i < len; i++) {
+      const chr = todaysSolution.youtubeId.charCodeAt(i);
+      hash = (hash << 5) - hash + chr;
+      hash |= 0;
+    }
+    return 10 + (Math.abs(hash) % Math.max(duration - 46, 1));
+  }
+
+  function handleError() {
+    if(videoLoads) {
+      setVideoLoads(false);
+    }
+    
+  }
   return (
     <>
       {didGuess ? (
@@ -88,7 +112,16 @@ export function Result({
           ></Styled.ResultColorBox>
         ))}
       </Styled.ResultsColorContainer>
-      <YouTube id={todaysSolution.youtubeId} mode={mode} />
+      {videoLoads ? (
+        <YouTube
+          id={todaysSolution.youtubeId}
+          mode={mode}
+          handleError={handleError}
+        />
+      ) : (
+        <audio ref={mp3ref} src={source} style={{marginBottom: "30px", marginTop: "20px"}} controls></audio>
+      )}
+
       <Button onClick={copyResult} variant="blue">
         Copy results
       </Button>

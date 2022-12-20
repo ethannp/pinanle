@@ -4,9 +4,10 @@ import { default as YouTubePlayer } from "react-youtube";
 interface Props {
   id: string;
   mode: string;
+  handleError: () => void;
 }
 
-export function YouTube({ id, mode }: Props) {
+export function YouTube({ id, mode, handleError }: Props) {
   function hash(duration: number): number {
     let hash = 0;
     for (let i = 0, len = id.length; i < len; i++) {
@@ -14,7 +15,7 @@ export function YouTube({ id, mode }: Props) {
       hash = (hash << 5) - hash + chr;
       hash |= 0;
     }
-    return 10 + (Math.abs(hash) % (Math.max(duration - 46, 1)));
+    return 10 + (Math.abs(hash) % Math.max(duration - 46, 1));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,6 +34,7 @@ export function YouTube({ id, mode }: Props) {
     <div style={{ margin: "5% 0" }}>
       <YouTubePlayer
         onReady={setReady}
+        onError={handleError}
         ref={playerRef}
         videoId={id}
         opts={{

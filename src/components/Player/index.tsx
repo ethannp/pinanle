@@ -1,7 +1,6 @@
 import React from "react";
-import YouTube from "react-youtube";
-import { IoPlayCircleOutline, IoStopCircleOutline } from "react-icons/io5";
 import { event } from "react-ga";
+import { IoPlayCircleOutline, IoStopCircleOutline } from "react-icons/io5";
 
 import { playTimes } from "../../constants";
 
@@ -11,25 +10,22 @@ interface Props {
   id: string;
   currentTry: number;
   mode: string;
+  error: () => void;
 }
 
-export function Player({ id, currentTry, mode }: Props) {
-  const opts = {
-    width: "1",
-    height: "1",
-  };
+export function Player({ id, currentTry, mode, error }: Props) {
+  const source =
+    "https://raw.githubusercontent.com/flfff/pinanle-storage/main/pieces/" +
+    id +
+    ".mp3";
 
-  // react-youtube doesn't export types for this
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const playerRef = React.useRef<any>(null);
+  const mp3ref = React.useRef<HTMLAudioElement>(null);
 
   const currentPlayTime = playTimes[currentTry];
 
   const [play, setPlay] = React.useState<boolean>(false);
 
   const [currentTime, setCurrentTime] = React.useState<number>(0);
-
-  const [isReady, setIsReady] = React.useState<boolean>(false);
 
   const startTimeRef = React.useRef<number>(-1);
 
@@ -44,45 +40,46 @@ export function Player({ id, currentTry, mode }: Props) {
   }
 
   setTimeout(function () {
-    const loadingText = document.getElementById("loadText");
-    if (loadingText !== null) {
-      loadingText.innerHTML =
-        "Loading player... <br/>Taking a long time? Try refreshing the page, but contact me if this doesn't fix it.";
+    if (mp3ref.current == null) {
+      return;
     }
-  }, 6000);
-
-  React.useEffect(() => {
-    setInterval(() => {
-      playerRef.current?.internalPlayer
-        .getCurrentTime()
-        .then((time: number) => {
-          setCurrentTime(time);
-        });
-    }, 250);
-  }, []);
-
-  React.useEffect(() => {
     if (startTimeRef.current == -1) {
       if (mode == "random") {
-        playerRef.current?.internalPlayer.getDuration().then((dur: number) => {
-          startTimeRef.current = hash(dur);
-          playerRef.current?.internalPlayer.seekTo(hash(dur));
-          playerRef.current?.internalPlayer.pauseVideo();
-          setPlay(false);
+        startTimeRef.current = hash(mp3ref.current.duration);
+        mp3ref.current.currentTime = hash(mp3ref.current.duration);
+        mp3ref.current.volume = 1;
+        mp3ref.current.pause();
+        setPlay(false);
+        mp3ref.current.addEventListener("timeupdate", () => {
+          if (mp3ref.current == null) {
+            return;
+          }
+          setCurrentTime(mp3ref.current.currentTime);
         });
       } else if (mode == "classic") {
         startTimeRef.current = 0;
+        mp3ref.current.volume = 1;
+        setPlay(false);
+        mp3ref.current.addEventListener("timeupdate", () => {
+          if (mp3ref.current == null) {
+            return;
+          }
+          setCurrentTime(mp3ref.current.currentTime);
+        });
       } else {
         //console.log("Waiting for valid mode to be passed.")
       }
     }
-  });
+  }, 200);
 
   React.useEffect(() => {
+    if (mp3ref.current == null) {
+      return;
+    }
     if (play) {
       if ((currentTime - startTimeRef.current) * 1000 >= currentPlayTime) {
-        playerRef.current?.internalPlayer.pauseVideo();
-        playerRef.current?.internalPlayer.seekTo(startTimeRef.current);
+        mp3ref.current.pause();
+        mp3ref.current.currentTime = startTimeRef.current;
         setPlay(false);
       }
     }
@@ -90,85 +87,45 @@ export function Player({ id, currentTry, mode }: Props) {
 
   // don't call play video each time currentTime changes
   const startPlayback = React.useCallback(() => {
-    playerRef.current?.internalPlayer
-      .getPlayerState()
-      .then(function (status: number) {
-        // -1 = unstarted
-        // 0 = ended
-        // 1 = playing
-        // 2 = paused
-        // 3 = buffering
-        // 5 = video cued
-        if (status == 1) {
-          // playing
-          playerRef.current?.internalPlayer.pauseVideo();
-          playerRef.current?.internalPlayer.seekTo(startTimeRef.current);
-          setPlay(false);
-        } else {
-          setPlay(true);
-          playerRef.current?.internalPlayer.seekTo(startTimeRef.current);
-          playerRef.current?.internalPlayer.playVideo();
-          event({
-            category: "Player",
-            action: "Played song",
-          });
-        }
-      });
-  }, []);
-
-  const setReady = React.useCallback(() => {
-    setIsReady(true);
-    playerRef.current?.internalPlayer.setVolume(80);
-    playerRef.current?.internalPlayer.unMute();
+    if (mp3ref.current == null) {
+      return;
+    }
+    if (mp3ref.current.paused) {
+      mp3ref.current.play();
+      mp3ref.current.currentTime = startTimeRef.current;
+      setPlay(true);
+    } else {
+      mp3ref.current.pause();
+      mp3ref.current.currentTime = startTimeRef.current;
+      setPlay(false);
+    }
   }, []);
 
   return (
     <>
-      <div style={{ opacity: 0, pointerEvents: "none", position: "absolute" }}>
-        <YouTube opts={opts} videoId={id} onReady={setReady} ref={playerRef} />
-      </div>
-      {isReady && mode != "unknown" && startTimeRef.current != -1 ? (
-        <>
-          <div style={{ marginTop: "10px" }} />
-          <Styled.ProgressBackground>
-            <Styled.AvailableBar value={currentPlayTime}></Styled.AvailableBar>
-            {play && (
-              <Styled.Progress value={currentTime - startTimeRef.current} />
-            )}
-            {playTimes.map((playTime) => (
-              <Styled.Separator
-                style={{ left: `${(playTime / 16000) * 100}%` }}
-                key={playTime}
-              />
-            ))}
-          </Styled.ProgressBackground>
-          <Styled.TimeStamps>
-            <Styled.TimeStamp>{mode == "random" ? "?" : "0s"}</Styled.TimeStamp>
-            <Styled.TimeStamp>
-              {mode == "random" ? "?" : "16s"}
-            </Styled.TimeStamp>
-          </Styled.TimeStamps>
-          <Styled.PlayButton>
-            {play ? (
-              <IoStopCircleOutline
-                size={60}
-                color="#fff"
-                onClick={startPlayback}
-              />
-            ) : (
-              <IoPlayCircleOutline
-                size={60}
-                color="#fff"
-                onClick={startPlayback}
-              />
-            )}
-          </Styled.PlayButton>
-        </>
-      ) : (
-        <p id="loadText" style={{ textAlign: "center" }}>
-          Loading player...
-        </p>
-      )}
+      <div style={{ marginTop: "10px" }} />
+      <audio src={source} ref={mp3ref} onError={() => error()}></audio>
+      <Styled.ProgressBackground>
+        <Styled.AvailableBar value={currentPlayTime}></Styled.AvailableBar>
+        {play && <Styled.Progress style={{width: (((currentTime - startTimeRef.current) / 16 ) * 100) + "%"}} />}
+        {playTimes.map((playTime) => (
+          <Styled.Separator
+            style={{ left: `${(playTime / 16000) * 100}%` }}
+            key={playTime}
+          />
+        ))}
+      </Styled.ProgressBackground>
+      <Styled.TimeStamps>
+        <Styled.TimeStamp>{mode == "random" ? "?" : "0s"}</Styled.TimeStamp>
+        <Styled.TimeStamp>{mode == "random" ? "?" : "16s"}</Styled.TimeStamp>
+      </Styled.TimeStamps>
+      <Styled.PlayButton>
+        {play ? (
+          <IoStopCircleOutline size={60} color="#fff" onClick={startPlayback} />
+        ) : (
+          <IoPlayCircleOutline size={60} color="#fff" onClick={startPlayback} />
+        )}
+      </Styled.PlayButton>
     </>
   );
 }
