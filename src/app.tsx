@@ -1,19 +1,16 @@
 import { event } from "react-ga";
 
-import React from "react";
 import _ from "lodash";
+import React from "react";
 
-import { Song } from "./types/song";
 import { GuessType } from "./types/guess";
+import { Song } from "./types/song";
 
 import { todaysSolution } from "./helpers";
 
 import {
-  Header,
-  InfoPopUp,
-  WarningPopUp,
-  RandomPopUp,
-  Game,
+  Game, Header,
+  InfoPopUp, RandomPopUp, WarningPopUp
 } from "./components";
 
 import * as Styled from "./app.styled";

@@ -38,7 +38,7 @@ export function RandomPopUp({ onClose, mode }: Props) {
         <Styled.Section>
           <p>
             Random Mode is a different way to play Pinanle - instead of starting at
-            the beginning of the piece (classic), a random starting time in the
+            the beginning of the piece (Classic), a random starting time in the
             piece will be chosen. Everyone has the same random starting time.
           </p>
         </Styled.Section>
