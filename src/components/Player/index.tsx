@@ -17,8 +17,7 @@ export function Player({ id, currentTry, mode, error }: Props) {
   const source =
     "https://raw.githubusercontent.com/flfff/pinanle-storage/main/pieces/" +
     id +
-    ".mp3#t=0.1"; 
-    // no idea why this fixes random playback on mobile??
+    ".mp3"; 
 
   const mp3ref = React.useRef<HTMLAudioElement>(null);
 
@@ -40,51 +39,43 @@ export function Player({ id, currentTry, mode, error }: Props) {
     return 10 + (Math.abs(hash) % Math.max(duration - 46, 1));
   }
 
-  const interval = React.useRef<any>(null);
-  const [isRunning, setIsRunning] = React.useState(true);
+  React.useEffect(() => {setStart(mode)}, [mode]);
 
-  React.useEffect(() => {
-    if (isRunning) {
-      interval.current = setInterval(function () {
-        if (mp3ref.current == null) {
-          return;
-        }
-        if (startTimeRef.current == -1) {
-          if (mode == "random") {
-            startTimeRef.current = hash(mp3ref.current.duration);
-            mp3ref.current.currentTime = hash(mp3ref.current.duration);
-            mp3ref.current.volume = 1;
-            mp3ref.current.pause();
-            setPlay(false);
-            mp3ref.current.addEventListener("timeupdate", () => {
-              if (mp3ref.current == null) {
-                return;
-              }
-              setCurrentTime(mp3ref.current.currentTime);
-            });
-            setIsRunning(false);
-          } else if (mode == "classic") {
-            startTimeRef.current = 0;
-            mp3ref.current.volume = 1;
-            setPlay(false);
-            mp3ref.current.addEventListener("timeupdate", () => {
-              if (mp3ref.current == null) {
-                return;
-              }
-              setCurrentTime(mp3ref.current.currentTime);
-            });
-            setIsRunning(false);
-          } else {
-            //console.log("Waiting for valid mode to be passed.")
-          }
-        } else {
-          setIsRunning(false);
-        }
-      }, 200);
-    } else {
-      clearInterval(interval.current);
+  function setStart(mode: string) {
+    if (mp3ref.current == null) {
+      return;
     }
-  }, [mode]);
+    if (startTimeRef.current == -1) {
+      if(Number.isNaN(mp3ref.current.duration)) {
+        return;
+      }
+      if (mode == "random") {
+        startTimeRef.current = hash(mp3ref.current.duration);
+        mp3ref.current.currentTime = hash(mp3ref.current.duration);
+        mp3ref.current.volume = 1;
+        mp3ref.current.pause();
+        setPlay(false);
+        mp3ref.current.addEventListener("timeupdate", () => {
+          if (mp3ref.current == null) {
+            return;
+          }
+          setCurrentTime(mp3ref.current.currentTime);
+        });
+      } else if (mode == "classic") {
+        startTimeRef.current = 0;
+        mp3ref.current.volume = 1;
+        setPlay(false);
+        mp3ref.current.addEventListener("timeupdate", () => {
+          if (mp3ref.current == null) {
+            return;
+          }
+          setCurrentTime(mp3ref.current.currentTime);
+        });
+      } else {
+        //console.log("Waiting for valid mode to be passed.")
+      }
+    }
+  }
 
   React.useEffect(() => {
     if (mp3ref.current == null) {
@@ -104,6 +95,7 @@ export function Player({ id, currentTry, mode, error }: Props) {
     if (mp3ref.current == null) {
       return;
     }
+    setStart(mode);
     if (mp3ref.current.paused) {
       mp3ref.current.play();
       mp3ref.current.currentTime = startTimeRef.current;
@@ -113,7 +105,7 @@ export function Player({ id, currentTry, mode, error }: Props) {
       mp3ref.current.currentTime = startTimeRef.current;
       setPlay(false);
     }
-  }, []);
+  }, [mode]);
 
   return (
     <>
